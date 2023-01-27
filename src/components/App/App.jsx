@@ -22,7 +22,13 @@ export const App = () => {
     const handleFetchImages = async (query, page) => {
       try {
         const resp = await fetchImages(query, page);
-        setImages(page === 1 ? [...resp.hits] : [...images, ...resp.hits]);
+        const nextImgs = resp.hits;
+        if (!nextImgs.length) {
+          return;
+        }
+        setImages(prevImgs =>
+          page === 1 ? [...nextImgs] : [...prevImgs, ...nextImgs]
+        );
         setTotalImgs(resp.totalHits);
       } catch (error) {
         console.log(error);
@@ -30,16 +36,23 @@ export const App = () => {
         setIsLoading(false);
       }
     };
+    if (!query) {
+      return;
+    }
     handleFetchImages(query, page);
   }, [query, page]);
   // load more
   const handleLoadMore = () => {
-    setPage(page + 1);
+    setPage(prevPage => prevPage + 1);
+
     setIsLoading(true);
   };
   // submit
   const handleSubmit = query => {
+    setImages([]);
+    setPage(1);
     setQuery(query);
+
     setIsLoading(true);
   };
   // render Button / Loader
@@ -61,6 +74,7 @@ export const App = () => {
         justifyContent: 'center',
         flexDirection: 'column',
         alignItems: 'center',
+        paddingBottom: 80,
         backgroundColor: '#22232B',
       }}
     >

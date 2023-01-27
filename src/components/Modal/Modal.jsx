@@ -2,31 +2,34 @@ import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 const modalRef = document.querySelector('#modal-root');
+
 export const Modal = ({ largeImg, onClose }) => {
   // close by esc
-  const onCloseByEsc = e => {
-    if (e.code === 'Escape') {
-      onClose();
-    }
-  };
   //effects
   useEffect(() => {
+    console.log('aafasf');
     // activate close by esc
     window.addEventListener('keydown', onCloseByEsc);
+    function onCloseByEsc(e) {
+      console.log(e.code);
+      if (e.code === 'Escape') {
+        // onClose();
+      }
+    }
     // disable close by esc
     return window.removeEventListener('keydown', onCloseByEsc);
   }, []);
 
   // render
-  createPortal(
-    <div className="Overlay" onClick={onClose}>
+  // onClick = { onClose };
+  return createPortal(
+    <div className="Overlay">
       <div className="Modal">
         <img src={largeImg} alt="" />
       </div>
     </div>,
     modalRef
   );
-  return null;
 };
 
 Modal.propTypes = {
