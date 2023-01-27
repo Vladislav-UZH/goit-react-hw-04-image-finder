@@ -7,18 +7,15 @@ export const Modal = ({ largeImg, onClose }) => {
   // close by esc
   //effects
   useEffect(() => {
-    console.log('aafasf');
-    // activate close by esc
     window.addEventListener('keydown', onCloseByEsc);
     function onCloseByEsc(e) {
-      console.log(e.code);
       if (e.code === 'Escape') {
-        // onClose();
+        onClose();
       }
     }
     // disable close by esc
-    return window.removeEventListener('keydown', onCloseByEsc);
-  }, []);
+    return () => window.removeEventListener('keydown', onCloseByEsc);
+  }, [onClose]);
 
   // render
   // onClick = { onClose };
