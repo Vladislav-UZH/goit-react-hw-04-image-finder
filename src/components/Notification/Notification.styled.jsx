@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 
-const Message = styled.p`
-  font-size: 17px;
-  color: #e2580a;
-  font-weight: 600;
+const Message = styled.span`
+  font-size: 23px;
+  color: inherit;
+  font-weight: 700;
 `;
 export { Message };

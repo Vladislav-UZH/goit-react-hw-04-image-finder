@@ -1,11 +1,9 @@
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
-const modalRef = document.querySelector('#modal-root');
+const modalRoot = document.querySelector('#modal-root');
 
 export const Modal = ({ largeImg, onClose }) => {
-  // close by esc
-  //effects
   useEffect(() => {
     window.addEventListener('keydown', onCloseByEsc);
     function onCloseByEsc(e) {
@@ -13,19 +11,21 @@ export const Modal = ({ largeImg, onClose }) => {
         onClose();
       }
     }
-    // disable close by esc
     return () => window.removeEventListener('keydown', onCloseByEsc);
   }, [onClose]);
-
-  // render
-  // onClick = { onClose };
+  const handleCloseByOverlay = e => {
+    if (e.target !== e.currentTarget) {
+      return;
+    }
+    onClose();
+  };
   return createPortal(
-    <div className="Overlay">
+    <div className="Overlay" onClick={handleCloseByOverlay}>
       <div className="Modal">
         <img src={largeImg} alt="" />
       </div>
     </div>,
-    modalRef
+    modalRoot
   );
 };
 

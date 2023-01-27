@@ -1,12 +1,11 @@
+import { useEffect, useState } from 'react';
+import { fetchImages } from 'service/fetchImages';
+// Components
 import { Button } from 'components/Button/Button';
 import { ImageGallery } from 'components/ImageGallery/ImageGallery';
 import { Loader } from 'components/Loader/Loader';
 import { SearchBar } from 'components/SearchBar/SearchBar';
-import { useEffect, useState } from 'react';
-import { fetchImages } from 'service/fetchImages';
-// Components
-
-// import Notification from 'components/Notification';
+import Notification from 'components/Notification';
 //___APP___
 
 export const App = () => {
@@ -15,16 +14,15 @@ export const App = () => {
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [totalImgs, setTotalImgs] = useState(0);
-  // fetch
 
-  // effects
   useEffect(() => {
     const handleFetchImages = async (query, page) => {
       try {
+        setIsLoading(true);
         const resp = await fetchImages(query, page);
         const nextImgs = resp.hits;
         if (!nextImgs.length) {
-          return;
+          return setImages([]);
         }
         setImages(prevImgs =>
           page === 1 ? [...nextImgs] : [...prevImgs, ...nextImgs]
@@ -41,109 +39,37 @@ export const App = () => {
     }
     handleFetchImages(query, page);
   }, [query, page]);
-  // load more
-  const handleLoadMore = () => {
-    setPage(prevPage => prevPage + 1);
+  const handleLoadMore = () => setPage(prevPage => prevPage + 1);
 
-    setIsLoading(true);
-  };
-  // submit
   const handleSubmit = query => {
-    setImages([]);
     setPage(1);
     setQuery(query);
+  };
 
-    setIsLoading(true);
-  };
-  // render Button / Loader
-  const renderButtonOrLoader = () => {
-    return isLoading ? (
-      <Loader />
-    ) : (
-      images.length !== 0 && images.length < totalImgs && (
-        <Button onClick={handleLoadMore} />
-      )
-    );
-  };
-  // render
   return (
     <div
       style={{
-        // padding: 20,
         display: 'flex',
         justifyContent: 'center',
         flexDirection: 'column',
         alignItems: 'center',
         paddingBottom: 80,
-        backgroundColor: '#22232B',
       }}
     >
       <SearchBar onSubmit={handleSubmit} />
-      <ImageGallery images={images} />
-      {renderButtonOrLoader()}
+      {isLoading && <Loader />}
+      {!images.length ? (
+        <Notification message="There aren`t images here... Enter something to search for!" />
+      ) : (
+        <ImageGallery images={images} />
+      )}
+
+      {isLoading ? (
+        <Loader />
+      ) : (
+        images.length !== 0 &&
+        images.length < totalImgs && <Button onClick={handleLoadMore} />
+      )}
     </div>
   );
 };
-
-// export class App extends Component {
-// state = {
-//   query: '',
-//   images: [],
-//   page: 1,
-//   isLoading: false,
-//   totalImgs: 0,
-// };
-// componentDidUpdate(_, prevState) {
-//   const { query, page } = state;
-//   if (prevquery !== query || prevpage !== page) {
-//     handleFetchImages(query, page);
-//   }
-// }
-// handleFetchImages = async (query, page) => {
-//   try {
-//     const resp = await fetchImages(query, page);
-//     setState(({ images }) => ({
-//       images: page === 1 ? [...resp.hits] : [...images, ...resp.hits],
-//       totalImgs: resp.totalHits,
-//     }));
-//   } catch (error) {
-//     console.log(error);
-//   } finally {
-//     setState({ isLoading: false });
-//   }
-// };
-// handleLoadMore = () => {
-//   setState(({ page }) => ({ page: page + 1, isLoading: true }));
-// };
-// handleSubmit = query => {
-//   setState({ query, isLoading: true });
-// };
-// renderButtonOrLoader = () => {
-//   return isLoading ? (
-//     <Loader />
-//   ) : (
-//     images.length !== 0 &&
-//       images.length < totalImgs && (
-//         <Button onClick={handleLoadMore} />
-//       )
-//   );
-// };
-// render() {
-// return (
-//   <div
-//     style={{
-//       // padding: 20,
-//       display: 'flex',
-//       justifyContent: 'center',
-//       flexDirection: 'column',
-//       alignItems: 'center',
-//       backgroundColor: '#22232B',
-//     }}
-//   >
-//     <SearchBar onSubmit={handleSubmit} />
-//     <ImageGallery images={images} />
-//     {renderButtonOrLoader()}
-//   </div>
-// );
-//   }
-// }
