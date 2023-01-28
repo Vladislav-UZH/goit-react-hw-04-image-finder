@@ -6,12 +6,10 @@ export const ImageGalleryItem = ({
   image: { webformatURL, largeImageURL },
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  // methods
-  // toggle modal
+
   const handleToggleModal = () => {
-    setIsModalOpen(!isModalOpen);
+    setIsModalOpen(prevState => !prevState);
   };
-  // render
   return (
     <>
       <li onClick={handleToggleModal} className="ImageGalleryItem">
@@ -19,7 +17,7 @@ export const ImageGalleryItem = ({
       </li>
       {isModalOpen && (
         <Modal
-          onClose={() => setIsModalOpen(!isModalOpen)}
+          onClose={() => setIsModalOpen(prevState => !prevState)}
           largeImg={largeImageURL}
         />
       )}
